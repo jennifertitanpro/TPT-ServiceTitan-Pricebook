@@ -1883,8 +1883,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+<script>
         let currentSection = 'overview';
         let serviceCost = 1200; // Base labor cost for demo (4 hours × $300)
         let materialCosts = [];
@@ -1951,7 +1950,35 @@
             const markup = parseFloat(document.getElementById('materialMarkup').value) || 0;
             const sellingPrice = cost * (1 + markup / 100);
             
-            document.getElementById('materialSellingPrice').value = '
+            document.getElementById('materialSellingPrice').value = '$' + sellingPrice.toFixed(2);
+        }
+
+        function calculateJobProfitability() {
+            const laborHours = parseFloat(document.getElementById('profitLaborHours').value) || 0;
+            const materialCost = parseFloat(document.getElementById('profitMaterialCost').value) || 0;
+            const equipmentCost = parseFloat(document.getElementById('profitEquipmentCost').value) || 0;
+            const materialMarkup = parseFloat(document.getElementById('profitMaterialMarkup').value) || 0;
+            const equipmentMarkup = parseFloat(document.getElementById('profitEquipmentMarkup').value) || 0;
+            const jobMarkup = parseFloat(document.getElementById('profitJobMarkup').value) || 0;
+            
+            const laborRate = 300;
+            const laborTotal = laborHours * laborRate;
+            const materialTotal = materialCost * (1 + materialMarkup / 100);
+            const equipmentTotal = equipmentCost * (1 + equipmentMarkup / 100);
+            const subtotal = laborTotal + materialTotal + equipmentTotal;
+            const finalPrice = subtotal * (1 + jobMarkup / 100);
+            const totalCosts = laborTotal + materialCost + equipmentCost;
+            const profit = finalPrice - totalCosts;
+            const profitPercent = (profit / finalPrice) * 100;
+            
+            document.getElementById('profitLaborTotal').textContent = laborTotal.toFixed(2);
+            document.getElementById('profitMaterialTotal').textContent = materialTotal.toFixed(2);
+            document.getElementById('profitEquipmentTotal').textContent = equipmentTotal.toFixed(2);
+            document.getElementById('profitSubtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('profitFinalPrice').textContent = finalPrice.toFixed(2);
+            document.getElementById('profitAmount').textContent = profit.toFixed(2);
+            document.getElementById('profitPercent').textContent = profitPercent.toFixed(1);
+        }
 
         function calculateCustomerPrice() {
             const basePrice = parseFloat(document.getElementById('basePrice').value) || 0;
@@ -2025,7 +2052,7 @@
             let materialsHtml = '';
             let materialsTotal = 0;
             materialCosts.forEach(item => {
-                materialsHtml += `<div>Material: ${item.name} - ${item.cost}</div>`;
+                materialsHtml += `<div>Material: ${item.name} - $${item.cost}</div>`;
                 materialsTotal += item.cost;
             });
             materialsList.innerHTML = materialsHtml;
@@ -2033,7 +2060,7 @@
             let equipmentHtml = '';
             let equipmentTotal = 0;
             equipmentCosts.forEach(item => {
-                equipmentHtml += `<div>Equipment: ${item.name} - ${item.cost}</div>`;
+                equipmentHtml += `<div>Equipment: ${item.name} - $${item.cost}</div>`;
                 equipmentTotal += item.cost;
             });
             equipmentsList.innerHTML = equipmentHtml;
@@ -2102,9 +2129,9 @@
             
             const comparison = document.getElementById('vendorComparison');
             comparison.innerHTML = `
-                <div><strong>Vendor A:</strong> ${vendorA_total.toFixed(2)} (${vendorA_lead} days)</div>
-                <div><strong>Vendor B:</strong> ${vendorB_total.toFixed(2)} (${vendorB_lead} days)</div>
-                <div><strong>Vendor C:</strong> ${vendorC_total.toFixed(2)} (${vendorC_lead} days)</div>
+                <div><strong>Vendor A:</strong> $${vendorA_total.toFixed(2)} (${vendorA_lead} days)</div>
+                <div><strong>Vendor B:</strong> $${vendorB_total.toFixed(2)} (${vendorB_lead} days)</div>
+                <div><strong>Vendor C:</strong> $${vendorC_total.toFixed(2)} (${vendorC_lead} days)</div>
                 <div style="margin-top: 0.5rem; font-weight: bold;">
                     Best Price: ${vendorA_total <= vendorB_total && vendorA_total <= vendorC_total ? 'Vendor A' : 
                                  vendorB_total <= vendorC_total ? 'Vendor B' : 'Vendor C'}
@@ -2141,18 +2168,14 @@
 
         // Initialize calculators
         document.addEventListener('DOMContentLoaded', function() {
-            calculateCustomerPrice();
+            if (document.getElementById('basePrice')) calculateCustomerPrice();
+            if (document.getElementById('profitLaborHours')) calculateJobProfitability();
             updateServiceBuilder();
             calculateInventoryImpact();
             calculateStockLevels();
             compareVendors();
-            calculateJobProfitability();
-            calculateAutoPOSavings();
-            calculateEmergencyCost();
-            calculateCostMetrics();
-            calculateVendorScore();
         });
-    </script>
+</script>
 </body>
 </html> + sellingPrice.toFixed(2);
         }
